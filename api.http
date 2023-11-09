@@ -1,0 +1,11 @@
+@api_base_url = http://localhost:3333
+
+### Create user account
+POST {{api_base_url}}/accounts
+Content-Type: application/json
+
+{
+	"name": "Rodrigo Orlandini",
+	"email": "rodrigosorlandini@hotmail.com",
+	"password": "12345678"
+}
