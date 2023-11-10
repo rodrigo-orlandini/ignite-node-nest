@@ -32,3 +32,9 @@ Authorization: Bearer {{access_token}}
 	"title": "New question",
 	"content": "Question content"
 }
+
+###
+# @name fetch_recent_questions
+GET {{api_base_url}}/questions?page=2
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
