@@ -1,6 +1,8 @@
 @api_base_url = http://localhost:3333
+@access_token = {{authenticate.response.body.access_token}}
 
-### Create user account
+###
+# @name create_account
 POST {{api_base_url}}/accounts
 Content-Type: application/json
 
@@ -10,7 +12,8 @@ Content-Type: application/json
 	"password": "12345678"
 }
 
-### Authenticate
+###
+# @name authenticate
 POST {{api_base_url}}/sessions
 Content-Type: application/json
 
@@ -18,3 +21,9 @@ Content-Type: application/json
 	"email": "rodrigosorlandini@hotmail.com",
 	"password": "12345678"
 }
+
+###
+# @name create_question
+POST {{api_base_url}}/questions
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
