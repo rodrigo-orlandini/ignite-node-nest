@@ -9,3 +9,12 @@ Content-Type: application/json
 	"email": "rodrigosorlandini@hotmail.com",
 	"password": "12345678"
 }
+
+### Authenticate
+POST {{api_base_url}}/sessions
+Content-Type: application/json
+
+{
+	"email": "rodrigosorlandini@hotmail.com",
+	"password": "12345678"
+}
