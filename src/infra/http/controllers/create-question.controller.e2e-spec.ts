@@ -3,8 +3,8 @@ import { Test } from "@nestjs/testing";
 
 import request from "supertest";
 
-import { AppModule } from "src/app.module";
-import { PrismaService } from "src/prisma/prisma.service";
+import { AppModule } from "src/infra/app.module";
+import { PrismaService } from "src/infra/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 
 describe("Create question (E2E)", () => {
