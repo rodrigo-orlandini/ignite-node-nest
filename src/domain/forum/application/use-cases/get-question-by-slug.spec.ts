@@ -10,22 +10,25 @@ let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
 
 describe("Get Question By Slug Use Case", () => {
-	beforeEach(() => {
-		inMemoryQuestionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository();
-		inMemoryQuestionsRepository = new InMemoryQuestionsRepository(inMemoryQuestionAttachmentsRepository);
+  beforeEach(() => {
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository();
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository,
+    );
 
-		sut = new GetQuestionBySlugUseCase(inMemoryQuestionsRepository);
-	});
+    sut = new GetQuestionBySlugUseCase(inMemoryQuestionsRepository);
+  });
 
-	it("should be able to get a question by slug", async () => {
-		const newQuestion = makeQuestion();
+  it("should be able to get a question by slug", async () => {
+    const newQuestion = makeQuestion();
 
-		await inMemoryQuestionsRepository.create(newQuestion);
+    await inMemoryQuestionsRepository.create(newQuestion);
 
-		const response = await sut.execute({
-			slug: "example-question"
-		});
-	
-		expect(response.isRight()).toBeTruthy();
-	});
+    const response = await sut.execute({
+      slug: "example-question",
+    });
+
+    expect(response.isRight()).toBeTruthy();
+  });
 });

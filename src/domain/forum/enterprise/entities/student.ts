@@ -1,14 +1,14 @@
-import { Entity } from "@/core/entities/entity";
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { Entity } from "src/core/entities/entity";
+import { UniqueEntityID } from "src/core/entities/unique-entity-id";
 
 interface StudentProps {
-	name: string;
+  name: string;
 }
 
 export class Student extends Entity<StudentProps> {
-	public static create(props: StudentProps, id?: UniqueEntityID) {
-		const student = new Student(props, id);
+  public static create(props: StudentProps, id?: UniqueEntityID) {
+    const student = new Student(props, id);
 
-		return student;
-	}
+    return student;
+  }
 }

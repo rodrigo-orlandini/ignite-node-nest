@@ -1,5 +1,5 @@
-import { Either, left, right } from "@/core/either";
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { Either, left, right } from "src/core/either";
+import { UniqueEntityID } from "src/core/entities/unique-entity-id";
 
 import { Answer } from "../../enterprise/entities/answer";
 import { AnswerAttachment } from "../../enterprise/entities/answer-attachment";
@@ -12,52 +12,61 @@ import { ResourceNotFoundError } from "../../../../core/errors/resource-not-foun
 import { NotAllowedError } from "../../../../core/errors/not-allowed-error";
 
 interface EditAnswerUseCaseRequest {
-	authorId: string;
-	answerId: string;
-	content: string;
-	attachmentsIds: string[];
+  authorId: string;
+  answerId: string;
+  content: string;
+  attachmentsIds: string[];
 }
 
-type EditAnswerUseCaseResponse = Either<ResourceNotFoundError | NotAllowedError, {
-	answer: Answer;
-}>
+type EditAnswerUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  {
+    answer: Answer;
+  }
+>;
 
 export class EditAnswerUseCase {
-	constructor (
-		private answersRepository: AnswersRepository,
-		private answerAttachmentsRepository: AnswerAttachmentsRepository
-	) {}
+  constructor(
+    private answersRepository: AnswersRepository,
+    private answerAttachmentsRepository: AnswerAttachmentsRepository,
+  ) {}
 
-	public async execute({
-		authorId, answerId, content, attachmentsIds 
-	}: EditAnswerUseCaseRequest): Promise<EditAnswerUseCaseResponse> {
-		const answer = await this.answersRepository.findById(answerId);
+  public async execute({
+    authorId,
+    answerId,
+    content,
+    attachmentsIds,
+  }: EditAnswerUseCaseRequest): Promise<EditAnswerUseCaseResponse> {
+    const answer = await this.answersRepository.findById(answerId);
 
-		if(!answer) {
-			return left(new ResourceNotFoundError());
-		}
+    if (!answer) {
+      return left(new ResourceNotFoundError());
+    }
 
-		if(authorId !== answer.authorId.toString()) {
-			return left(new NotAllowedError());
-		}
+    if (authorId !== answer.authorId.toString()) {
+      return left(new NotAllowedError());
+    }
 
-		const currentAnswerAttachments = await this.answerAttachmentsRepository.findManyByAnswerId(answerId);
-		const answerAttachmentsList = new AnswerAttachmentList(currentAnswerAttachments);
+    const currentAnswerAttachments =
+      await this.answerAttachmentsRepository.findManyByAnswerId(answerId);
+    const answerAttachmentsList = new AnswerAttachmentList(
+      currentAnswerAttachments,
+    );
 
-		const answerAttachments = attachmentsIds.map(attachmentId => 
-			AnswerAttachment.create({ 
-				attachmentId: new UniqueEntityID(attachmentId), 
-				answerId: answer.id 
-			})
-		);
+    const answerAttachments = attachmentsIds.map((attachmentId) =>
+      AnswerAttachment.create({
+        attachmentId: new UniqueEntityID(attachmentId),
+        answerId: answer.id,
+      }),
+    );
 
-		answerAttachmentsList.update(answerAttachments);
+    answerAttachmentsList.update(answerAttachments);
 
-		answer.content = content;
-		answer.attachments = answerAttachmentsList;
+    answer.content = content;
+    answer.attachments = answerAttachmentsList;
 
-		await this.answersRepository.save(answer);
+    await this.answersRepository.save(answer);
 
-		return right({ answer });
-	}
+    return right({ answer });
+  }
 }

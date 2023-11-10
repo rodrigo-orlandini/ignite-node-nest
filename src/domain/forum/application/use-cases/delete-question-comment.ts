@@ -1,4 +1,4 @@
-import { Either, left, right } from "@/core/either";
+import { Either, left, right } from "src/core/either";
 
 import { QuestionCommentsRepository } from "../repositories/question-comments-repository";
 
@@ -6,32 +6,35 @@ import { ResourceNotFoundError } from "../../../../core/errors/resource-not-foun
 import { NotAllowedError } from "../../../../core/errors/not-allowed-error";
 
 interface DeleteQuestionCommentUseCaseRequest {
-	authorId: string;
-	questionCommentId: string;
+  authorId: string;
+  questionCommentId: string;
 }
 
-type DeleteQuestionCommentUseCaseResponse = Either<ResourceNotFoundError | NotAllowedError, object>
+type DeleteQuestionCommentUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  object
+>;
 
 export class DeleteQuestionCommentUseCase {
-	constructor (
-		private questionCommentsRepository: QuestionCommentsRepository
-	) {}
+  constructor(private questionCommentsRepository: QuestionCommentsRepository) {}
 
-	public async execute({ 
-		authorId, questionCommentId 
-	}: DeleteQuestionCommentUseCaseRequest): Promise<DeleteQuestionCommentUseCaseResponse> {
-		const questionComment = await this.questionCommentsRepository.findById(questionCommentId);
+  public async execute({
+    authorId,
+    questionCommentId,
+  }: DeleteQuestionCommentUseCaseRequest): Promise<DeleteQuestionCommentUseCaseResponse> {
+    const questionComment =
+      await this.questionCommentsRepository.findById(questionCommentId);
 
-		if(!questionComment) {
-			return left(new ResourceNotFoundError());
-		}
+    if (!questionComment) {
+      return left(new ResourceNotFoundError());
+    }
 
-		if(questionComment.authorId.toString() !== authorId) {
-			return left(new NotAllowedError());
-		}
+    if (questionComment.authorId.toString() !== authorId) {
+      return left(new NotAllowedError());
+    }
 
-		await this.questionCommentsRepository.delete(questionComment);
+    await this.questionCommentsRepository.delete(questionComment);
 
-		return right({});
-	}
+    return right({});
+  }
 }

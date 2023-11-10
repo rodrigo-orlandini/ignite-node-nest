@@ -1,6 +1,6 @@
 import { EditAnswerUseCase } from "./edit-answer";
 
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { UniqueEntityID } from "src/core/entities/unique-entity-id";
 
 import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-repository";
 import { makeAnswer } from "test/factories/make-answer";
@@ -14,56 +14,78 @@ let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository;
 let inMemoryAnswersRepository: InMemoryAnswersRepository;
 
 describe("Edit Answer Use Case", () => {
-	beforeEach(() => {
-		inMemoryAnswerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository();
-		inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository);
+  beforeEach(() => {
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository();
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository,
+    );
 
-		sut = new EditAnswerUseCase(inMemoryAnswersRepository, inMemoryAnswerAttachmentsRepository);
-	});
+    sut = new EditAnswerUseCase(
+      inMemoryAnswersRepository,
+      inMemoryAnswerAttachmentsRepository,
+    );
+  });
 
-	it("should be able to edit an answer", async () => {
-		const newAnswer = makeAnswer({
-			authorId: new UniqueEntityID("author-1")
-		}, new UniqueEntityID("answer-1"));
+  it("should be able to edit an answer", async () => {
+    const newAnswer = makeAnswer(
+      {
+        authorId: new UniqueEntityID("author-1"),
+      },
+      new UniqueEntityID("answer-1"),
+    );
 
-		await inMemoryAnswersRepository.create(newAnswer);
-		inMemoryAnswerAttachmentsRepository.items.push(
-			makeAnswerAttachment({ answerId: newAnswer.id, attachmentId: new UniqueEntityID("1") }),
-			makeAnswerAttachment({ answerId: newAnswer.id, attachmentId: new UniqueEntityID("2") })
-		);
+    await inMemoryAnswersRepository.create(newAnswer);
+    inMemoryAnswerAttachmentsRepository.items.push(
+      makeAnswerAttachment({
+        answerId: newAnswer.id,
+        attachmentId: new UniqueEntityID("1"),
+      }),
+      makeAnswerAttachment({
+        answerId: newAnswer.id,
+        attachmentId: new UniqueEntityID("2"),
+      }),
+    );
 
-		await sut.execute({
-			authorId: "author-1",
-			answerId: "answer-1",
-			content: "Test Content",
-			attachmentsIds: ["1", "3"]
-		});
-	
-		expect(inMemoryAnswersRepository.items[0]).toMatchObject({
-			content: "Test Content"
-		});
-		expect(inMemoryAnswersRepository.items[0].attachments.currentItems).toHaveLength(2);
-		expect(inMemoryAnswersRepository.items[0].attachments.currentItems).toEqual([
-			expect.objectContaining({ attachmentId: new UniqueEntityID("1") }),
-			expect.objectContaining({ attachmentId: new UniqueEntityID("3") })
-		]);
-	});
+    await sut.execute({
+      authorId: "author-1",
+      answerId: "answer-1",
+      content: "Test Content",
+      attachmentsIds: ["1", "3"],
+    });
 
-	it("should not be able to edit an answer from another user", async () => {
-		const newAnswer = makeAnswer({
-			authorId: new UniqueEntityID("author-1")
-		}, new UniqueEntityID("answer-1"));
+    expect(inMemoryAnswersRepository.items[0]).toMatchObject({
+      content: "Test Content",
+    });
+    expect(
+      inMemoryAnswersRepository.items[0].attachments.currentItems,
+    ).toHaveLength(2);
+    expect(inMemoryAnswersRepository.items[0].attachments.currentItems).toEqual(
+      [
+        expect.objectContaining({ attachmentId: new UniqueEntityID("1") }),
+        expect.objectContaining({ attachmentId: new UniqueEntityID("3") }),
+      ],
+    );
+  });
 
-		await inMemoryAnswersRepository.create(newAnswer);
+  it("should not be able to edit an answer from another user", async () => {
+    const newAnswer = makeAnswer(
+      {
+        authorId: new UniqueEntityID("author-1"),
+      },
+      new UniqueEntityID("answer-1"),
+    );
 
-		const response = await sut.execute({
-			authorId: "author-2",
-			answerId: "answer-1",
-			content: "Test Content",
-			attachmentsIds: []
-		});
+    await inMemoryAnswersRepository.create(newAnswer);
 
-		expect(response.isLeft()).toBeTruthy();
-		expect(response.value).toBeInstanceOf(NotAllowedError);
-	});
+    const response = await sut.execute({
+      authorId: "author-2",
+      answerId: "answer-1",
+      content: "Test Content",
+      attachmentsIds: [],
+    });
+
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toBeInstanceOf(NotAllowedError);
+  });
 });

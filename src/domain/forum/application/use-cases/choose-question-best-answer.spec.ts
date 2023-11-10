@@ -1,6 +1,6 @@
 import { ChooseQuestionBestAnswerUseCase } from "./choose-question-best-answer";
 
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { UniqueEntityID } from "src/core/entities/unique-entity-id";
 
 import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-repository";
 import { InMemoryQuestionsRepository } from "test/repositories/in-memory-questions-repository";
@@ -19,47 +19,58 @@ let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
 
 describe("Choose Question Best Answer Use Case", () => {
-	beforeEach(() => {
-		inMemoryAnswerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository();
-		inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository);
-		inMemoryQuestionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository();
-		inMemoryQuestionsRepository = new InMemoryQuestionsRepository(inMemoryQuestionAttachmentsRepository);
+  beforeEach(() => {
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository();
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository,
+    );
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository();
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository,
+    );
 
-		sut = new ChooseQuestionBestAnswerUseCase(inMemoryAnswersRepository, inMemoryQuestionsRepository);
-	});
+    sut = new ChooseQuestionBestAnswerUseCase(
+      inMemoryAnswersRepository,
+      inMemoryQuestionsRepository,
+    );
+  });
 
-	it("should be able to choose the best answer", async () => {
-		const question = makeQuestion();
+  it("should be able to choose the best answer", async () => {
+    const question = makeQuestion();
 
-		const answer = makeAnswer({ questionId: question.id });
+    const answer = makeAnswer({ questionId: question.id });
 
-		await inMemoryQuestionsRepository.create(question);
-		await inMemoryAnswersRepository.create(answer);
+    await inMemoryQuestionsRepository.create(question);
+    await inMemoryAnswersRepository.create(answer);
 
-		await sut.execute({
-			authorId: question.authorId.toString(),
-			answerId: answer.id.toString()
-		});
-	
-		expect(inMemoryQuestionsRepository.items[0].bestAnswerId).toEqual(answer.id);
-	});
+    await sut.execute({
+      authorId: question.authorId.toString(),
+      answerId: answer.id.toString(),
+    });
 
-	it("should not be able to choose another user question best answer", async () => {
-		const question = makeQuestion({
-			authorId: new UniqueEntityID("author-1")
-		});
+    expect(inMemoryQuestionsRepository.items[0].bestAnswerId).toEqual(
+      answer.id,
+    );
+  });
 
-		const answer = makeAnswer({ questionId: question.id });
+  it("should not be able to choose another user question best answer", async () => {
+    const question = makeQuestion({
+      authorId: new UniqueEntityID("author-1"),
+    });
 
-		await inMemoryQuestionsRepository.create(question);
-		await inMemoryAnswersRepository.create(answer);
+    const answer = makeAnswer({ questionId: question.id });
 
-		const response = await sut.execute({
-			answerId: answer.id.toString(),
-			authorId: "author-2"
-		});
+    await inMemoryQuestionsRepository.create(question);
+    await inMemoryAnswersRepository.create(answer);
 
-		expect(response.isLeft()).toBeTruthy();
-		expect(response.value).toBeInstanceOf(NotAllowedError);
-	});
+    const response = await sut.execute({
+      answerId: answer.id.toString(),
+      authorId: "author-2",
+    });
+
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toBeInstanceOf(NotAllowedError);
+  });
 });

@@ -1,7 +1,11 @@
 import { SpyInstance } from "vitest";
 
 import { OnAnswerCreated } from "./on-answer-created";
-import { SendNotificationUseCase, SendNotificationUseCaseRequest, SendNotificationUseCaseResponse } from "../use-cases/send-notification";
+import {
+  SendNotificationUseCase,
+  SendNotificationUseCaseRequest,
+  SendNotificationUseCaseResponse,
+} from "../use-cases/send-notification";
 
 import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-repository";
 import { InMemoryAnswerAttachmentsRepository } from "test/repositories/in-memory-answer-attachments-repository";
@@ -21,35 +25,46 @@ let inMemoryNotificationsRepository: InMemoryNotificationsRepository;
 
 let sendNotificationUseCase: SendNotificationUseCase;
 
-let sendNotificationExecuteSpy: SpyInstance<[SendNotificationUseCaseRequest], Promise<SendNotificationUseCaseResponse>>;
+let sendNotificationExecuteSpy: SpyInstance<
+  [SendNotificationUseCaseRequest],
+  Promise<SendNotificationUseCaseResponse>
+>;
 
 describe("On Answer Created", () => {
-	beforeEach(() => {
-		inMemoryQuestionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository();
-		inMemoryQuestionsRepository = new InMemoryQuestionsRepository(inMemoryQuestionAttachmentsRepository);
-		inMemoryAnswerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository();
-		inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository);
-		inMemoryNotificationsRepository = new InMemoryNotificationsRepository();
+  beforeEach(() => {
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository();
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository,
+    );
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository();
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository,
+    );
+    inMemoryNotificationsRepository = new InMemoryNotificationsRepository();
 
-		sendNotificationUseCase = new SendNotificationUseCase(inMemoryNotificationsRepository);
+    sendNotificationUseCase = new SendNotificationUseCase(
+      inMemoryNotificationsRepository,
+    );
 
-		sendNotificationExecuteSpy = vi.spyOn(sendNotificationUseCase, "execute");
+    sendNotificationExecuteSpy = vi.spyOn(sendNotificationUseCase, "execute");
 
-		// Adding listener
-		new OnAnswerCreated(inMemoryQuestionsRepository, sendNotificationUseCase);
-	});
+    // Adding listener
+    new OnAnswerCreated(inMemoryQuestionsRepository, sendNotificationUseCase);
+  });
 
-	it("should send a notification when an answer is created", async () => {
-		const question = makeQuestion();
-		await inMemoryQuestionsRepository.create(question);
-		
-		const answer = makeAnswer({ questionId: question.id });
+  it("should send a notification when an answer is created", async () => {
+    const question = makeQuestion();
+    await inMemoryQuestionsRepository.create(question);
 
-		// Trigger event
-		await inMemoryAnswersRepository.create(answer);
+    const answer = makeAnswer({ questionId: question.id });
 
-		await waitFor(() => {
-			expect(sendNotificationExecuteSpy).toHaveBeenCalled();
-		});
-	});
+    // Trigger event
+    await inMemoryAnswersRepository.create(answer);
+
+    await waitFor(() => {
+      expect(sendNotificationExecuteSpy).toHaveBeenCalled();
+    });
+  });
 });

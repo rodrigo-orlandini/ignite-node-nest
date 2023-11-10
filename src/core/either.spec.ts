@@ -1,23 +1,23 @@
 import { Either, left, right } from "./either";
 
 const doSomething = (shouldSuccess: boolean): Either<string, string> => {
-	if(shouldSuccess) {
-		return right("Success");
-	}
+  if (shouldSuccess) {
+    return right("Success");
+  }
 
-	return left("Failure");
+  return left("Failure");
 };
 
 test("it should be able to return a success result", () => {
-	const success = doSomething(true);
+  const success = doSomething(true);
 
-	expect(success.isRight()).toBeTruthy();
-	expect(success.isLeft()).toBeFalsy();
+  expect(success.isRight()).toBeTruthy();
+  expect(success.isLeft()).toBeFalsy();
 });
 
 test("it should be able to return a failure", () => {
-	const failure = doSomething(false);
+  const failure = doSomething(false);
 
-	expect(failure.isRight()).toBeFalsy();
-	expect(failure.isLeft()).toBeTruthy();
+  expect(failure.isRight()).toBeFalsy();
+  expect(failure.isLeft()).toBeTruthy();
 });

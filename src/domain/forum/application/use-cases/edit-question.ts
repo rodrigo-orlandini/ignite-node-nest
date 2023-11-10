@@ -1,5 +1,5 @@
-import { Either, left, right } from "@/core/either";
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { Either, left, right } from "src/core/either";
+import { UniqueEntityID } from "src/core/entities/unique-entity-id";
 
 import { Question } from "../../enterprise/entities/question";
 import { QuestionAttachment } from "../../enterprise/entities/question-attachment";
@@ -12,54 +12,64 @@ import { ResourceNotFoundError } from "../../../../core/errors/resource-not-foun
 import { NotAllowedError } from "../../../../core/errors/not-allowed-error";
 
 interface EditQuestionUseCaseRequest {
-	authorId: string;
-	questionId: string;
-	title: string;
-	content: string;
-	attachmentsIds: string[];
+  authorId: string;
+  questionId: string;
+  title: string;
+  content: string;
+  attachmentsIds: string[];
 }
 
-type EditQuestionUseCaseResponse = Either<ResourceNotFoundError | NotAllowedError, {
-	question: Question;
-}>;
+type EditQuestionUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  {
+    question: Question;
+  }
+>;
 
 export class EditQuestionUseCase {
-	constructor (
-		private questionsRepository: QuestionsRepository,
-		private questionAttachmentsRepository: QuestionAttachmentsRepository
-	) {}
+  constructor(
+    private questionsRepository: QuestionsRepository,
+    private questionAttachmentsRepository: QuestionAttachmentsRepository,
+  ) {}
 
-	public async execute({ 
-		authorId, questionId, title, content, attachmentsIds
-	}: EditQuestionUseCaseRequest): Promise<EditQuestionUseCaseResponse> {
-		const question = await this.questionsRepository.findById(questionId);
+  public async execute({
+    authorId,
+    questionId,
+    title,
+    content,
+    attachmentsIds,
+  }: EditQuestionUseCaseRequest): Promise<EditQuestionUseCaseResponse> {
+    const question = await this.questionsRepository.findById(questionId);
 
-		if(!question) {
-			return left(new ResourceNotFoundError());
-		}
+    if (!question) {
+      return left(new ResourceNotFoundError());
+    }
 
-		if(authorId !== question.authorId.toString()) {
-			return left(new ResourceNotFoundError());
-		}
+    if (authorId !== question.authorId.toString()) {
+      return left(new ResourceNotFoundError());
+    }
 
-		const currentQuestionAttachments = await this.questionAttachmentsRepository.findManyByQuestionId(questionId);
-		const questionAttachmentsList = new QuestionAttachmentList(currentQuestionAttachments);
+    const currentQuestionAttachments =
+      await this.questionAttachmentsRepository.findManyByQuestionId(questionId);
+    const questionAttachmentsList = new QuestionAttachmentList(
+      currentQuestionAttachments,
+    );
 
-		const questionAttachments = attachmentsIds.map(attachmentId => 
-			QuestionAttachment.create({ 
-				attachmentId: new UniqueEntityID(attachmentId), 
-				questionId: question.id 
-			})
-		);
+    const questionAttachments = attachmentsIds.map((attachmentId) =>
+      QuestionAttachment.create({
+        attachmentId: new UniqueEntityID(attachmentId),
+        questionId: question.id,
+      }),
+    );
 
-		questionAttachmentsList.update(questionAttachments);
+    questionAttachmentsList.update(questionAttachments);
 
-		question.title = title;
-		question.content = content;
-		question.attachments = questionAttachmentsList;
+    question.title = title;
+    question.content = content;
+    question.attachments = questionAttachmentsList;
 
-		await this.questionsRepository.save(question);
+    await this.questionsRepository.save(question);
 
-		return right({ question });
-	}
+    return right({ question });
+  }
 }

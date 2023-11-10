@@ -1,13 +1,22 @@
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { UniqueEntityID } from "src/core/entities/unique-entity-id";
 
-import { AnswerAttachment, AnswerAttachmentProps } from "@/domain/forum/enterprise/entities/answer-attachment";
+import {
+  AnswerAttachment,
+  AnswerAttachmentProps,
+} from "src/domain/forum/enterprise/entities/answer-attachment";
 
-export const makeAnswerAttachment = (override: Partial<AnswerAttachmentProps> = {}, id?: UniqueEntityID) => {
-	const answerAttachment = AnswerAttachment.create({
-		answerId: new UniqueEntityID(),
-		attachmentId: new UniqueEntityID(),
-		...override
-	}, id);
+export const makeAnswerAttachment = (
+  override: Partial<AnswerAttachmentProps> = {},
+  id?: UniqueEntityID,
+) => {
+  const answerAttachment = AnswerAttachment.create(
+    {
+      answerId: new UniqueEntityID(),
+      attachmentId: new UniqueEntityID(),
+      ...override,
+    },
+    id,
+  );
 
-	return answerAttachment;
+  return answerAttachment;
 };

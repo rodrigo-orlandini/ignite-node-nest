@@ -1,4 +1,4 @@
-import { Either, left, right } from "@/core/either";
+import { Either, left, right } from "src/core/either";
 
 import { QuestionsRepository } from "../repositories/questions-repository";
 
@@ -6,30 +6,34 @@ import { ResourceNotFoundError } from "../../../../core/errors/resource-not-foun
 import { NotAllowedError } from "../../../../core/errors/not-allowed-error";
 
 interface DeleteQuestionUseCaseRequest {
-	authorId: string;
-	questionId: string;
+  authorId: string;
+  questionId: string;
 }
 
-type DeleteQuestionUseCaseResponse = Either<ResourceNotFoundError | NotAllowedError, object>
+type DeleteQuestionUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  object
+>;
 
 export class DeleteQuestionUseCase {
-	constructor (
-		private questionsRepository: QuestionsRepository
-	) {}
+  constructor(private questionsRepository: QuestionsRepository) {}
 
-	public async execute({ authorId, questionId }: DeleteQuestionUseCaseRequest): Promise<DeleteQuestionUseCaseResponse> {
-		const question = await this.questionsRepository.findById(questionId);
+  public async execute({
+    authorId,
+    questionId,
+  }: DeleteQuestionUseCaseRequest): Promise<DeleteQuestionUseCaseResponse> {
+    const question = await this.questionsRepository.findById(questionId);
 
-		if(!question) {
-			return left(new ResourceNotFoundError());
-		}
+    if (!question) {
+      return left(new ResourceNotFoundError());
+    }
 
-		if(authorId !== question.authorId.toString()) {
-			return left(new NotAllowedError());
-		}
+    if (authorId !== question.authorId.toString()) {
+      return left(new NotAllowedError());
+    }
 
-		await this.questionsRepository.delete(question);
+    await this.questionsRepository.delete(question);
 
-		return right({});
-	}
+    return right({});
+  }
 }

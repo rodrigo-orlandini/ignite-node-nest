@@ -12,24 +12,32 @@ let inMemoryAnswersRepository: InMemoryAnswersRepository;
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository;
 
 describe("Comment On Answer Use Case", () => {
-	beforeEach(() => {
-		inMemoryAnswerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository();
-		inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository);
-		inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository();
+  beforeEach(() => {
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository();
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository,
+    );
+    inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository();
 
-		sut = new CommentOnAnswerUseCase(inMemoryAnswersRepository, inMemoryAnswerCommentsRepository);
-	});
+    sut = new CommentOnAnswerUseCase(
+      inMemoryAnswersRepository,
+      inMemoryAnswerCommentsRepository,
+    );
+  });
 
-	it("should be able to comment on answer", async () => {
-		const answer = makeAnswer();
-		await inMemoryAnswersRepository.create(answer);
+  it("should be able to comment on answer", async () => {
+    const answer = makeAnswer();
+    await inMemoryAnswersRepository.create(answer);
 
-		await sut.execute({
-			answerId: answer.id.toString(),
-			authorId: answer.authorId.toString(),
-			content: "Test comment"
-		});
-	
-		expect(inMemoryAnswerCommentsRepository.items[0].content).toEqual("Test comment");
-	});
+    await sut.execute({
+      answerId: answer.id.toString(),
+      authorId: answer.authorId.toString(),
+      content: "Test comment",
+    });
+
+    expect(inMemoryAnswerCommentsRepository.items[0].content).toEqual(
+      "Test comment",
+    );
+  });
 });
