@@ -27,3 +27,8 @@ Content-Type: application/json
 POST {{api_base_url}}/questions
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
+
+{
+	"title": "New question",
+	"content": "Question content"
+}
