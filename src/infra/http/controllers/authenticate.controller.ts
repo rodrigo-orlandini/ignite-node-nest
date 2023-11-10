@@ -10,7 +10,7 @@ import { JwtService } from "@nestjs/jwt";
 
 import { z } from "zod";
 
-import { PrismaService } from "src/infra/prisma/prisma.service";
+import { PrismaService } from "src/infra/database/prisma/prisma.service";
 import { ZodValidationPipe } from "src/infra/http/pipes/zod-validation-pipe";
 import { compare } from "bcryptjs";
 

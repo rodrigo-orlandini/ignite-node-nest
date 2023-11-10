@@ -5,7 +5,7 @@ import request from "supertest";
 import { hash } from "bcryptjs";
 
 import { AppModule } from "src/infra/app.module";
-import { PrismaService } from "src/infra/prisma/prisma.service";
+import { PrismaService } from "src/infra/database/prisma/prisma.service";
 
 describe("Authenticate (E2E)", () => {
   let app: INestApplication;
