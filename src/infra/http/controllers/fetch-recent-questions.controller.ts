@@ -1,4 +1,11 @@
-import { Controller, Get, HttpCode, Query, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  HttpCode,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { z } from "zod";
 
 import { JwtAuthGuard } from "src/infra/auth/jwt-auth.guard";
@@ -29,7 +36,7 @@ export class FetchRecentQuestionsController {
     const response = await this.fetchRecentQuestions.execute({ page });
 
     if (response.isLeft()) {
-      throw new Error();
+      throw new BadRequestException();
     }
 
     const questions = response.value.questions;
