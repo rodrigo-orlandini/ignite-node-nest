@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import { Either, left, right } from "src/core/either";
 
 import { AnswersRepository } from "../repositories/answers-repository";
@@ -15,6 +16,7 @@ type DeleteAnswerUseCaseResponse = Either<
   object
 >;
 
+@Injectable()
 export class DeleteAnswerUseCase {
   constructor(private answersRepository: AnswersRepository) {}
 
