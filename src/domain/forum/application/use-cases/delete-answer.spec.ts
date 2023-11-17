@@ -47,7 +47,7 @@ describe("Delete Answer Use Case", () => {
 
     await sut.execute({
       authorId: "author-1",
-      questionId: "answer-1",
+      answerId: "answer-1",
     });
 
     expect(inMemoryAnswersRepository.items).toHaveLength(0);
@@ -66,7 +66,7 @@ describe("Delete Answer Use Case", () => {
 
     const response = await sut.execute({
       authorId: "author-2",
-      questionId: "answer-1",
+      answerId: "answer-1",
     });
 
     expect(response.isLeft()).toBeTruthy();

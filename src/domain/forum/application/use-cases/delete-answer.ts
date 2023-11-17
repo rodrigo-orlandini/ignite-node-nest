@@ -8,7 +8,7 @@ import { ResourceNotFoundError } from "../../../../core/errors/resource-not-foun
 
 interface DeleteAnswerUseCaseRequest {
   authorId: string;
-  questionId: string;
+  answerId: string;
 }
 
 type DeleteAnswerUseCaseResponse = Either<
@@ -22,19 +22,19 @@ export class DeleteAnswerUseCase {
 
   public async execute({
     authorId,
-    questionId,
+    answerId,
   }: DeleteAnswerUseCaseRequest): Promise<DeleteAnswerUseCaseResponse> {
-    const question = await this.answersRepository.findById(questionId);
+    const answer = await this.answersRepository.findById(answerId);
 
-    if (!question) {
+    if (!answer) {
       return left(new ResourceNotFoundError());
     }
 
-    if (authorId !== question.authorId.toString()) {
+    if (authorId !== answer.authorId.toString()) {
       return left(new NotAllowedError());
     }
 
-    await this.answersRepository.delete(question);
+    await this.answersRepository.delete(answer);
 
     return right({});
   }
