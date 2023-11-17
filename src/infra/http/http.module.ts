@@ -18,6 +18,7 @@ import { CommentOnAnswerController } from "./controllers/comment-on-answer.contr
 import { DeleteAnswerCommentController } from "./controllers/delete-answer-comment.controller";
 import { FetchQuestionCommentsController } from "./controllers/fetch-question-comments.controller";
 import { FetchAnswerCommentsController } from "./controllers/fetch-answer-comments.controller";
+import { UploadAttachmentController } from "./controllers/upload-attachment.controller";
 
 import { CreateQuestionUseCase } from "src/domain/forum/application/use-cases/create-question";
 import { FetchRecentQuestionsUseCase } from "src/domain/forum/application/use-cases/fetch-recent-questions";
@@ -37,12 +38,14 @@ import { CommentOnAnswerUseCase } from "src/domain/forum/application/use-cases/c
 import { DeleteAnswerCommentUseCase } from "src/domain/forum/application/use-cases/delete-answer-comment";
 import { FetchQuestionCommentsUseCase } from "src/domain/forum/application/use-cases/fetch-question-comments";
 import { FetchAnswerCommentsUseCase } from "src/domain/forum/application/use-cases/fetch-answer-comments";
+import { UploadAttachmentUseCase } from "src/domain/forum/application/use-cases/upload-attachment";
 
 import { DatabaseModule } from "../database/database.module";
 import { CryptographyModule } from "../cryptography/cryptography.module";
+import { StorageModule } from "../storage/storage.module";
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule],
+  imports: [DatabaseModule, CryptographyModule, StorageModule],
   controllers: [
     CreateAccountController,
     AuthenticateController,
@@ -62,6 +65,7 @@ import { CryptographyModule } from "../cryptography/cryptography.module";
     DeleteAnswerCommentController,
     FetchQuestionCommentsController,
     FetchAnswerCommentsController,
+    UploadAttachmentController,
   ],
   providers: [
     CreateQuestionUseCase,
@@ -83,6 +87,7 @@ import { CryptographyModule } from "../cryptography/cryptography.module";
     DeleteAnswerCommentUseCase,
     FetchQuestionCommentsUseCase,
     FetchAnswerCommentsUseCase,
+    UploadAttachmentUseCase,
   ],
 })
 export class HttpModule {}
