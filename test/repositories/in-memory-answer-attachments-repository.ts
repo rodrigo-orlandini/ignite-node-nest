@@ -6,6 +6,16 @@ export class InMemoryAnswerAttachmentsRepository
 {
   public items: AnswerAttachment[] = [];
 
+  public async createMany(attachments: AnswerAttachment[]): Promise<void> {
+    this.items.push(...attachments);
+  }
+
+  public async deleteMany(attachments: AnswerAttachment[]): Promise<void> {
+    this.items = this.items.filter(
+      (item) => !attachments.some((attachment) => attachment.equals(item)),
+    );
+  }
+
   public async findManyByAnswerId(
     answerId: string,
   ): Promise<AnswerAttachment[]> {

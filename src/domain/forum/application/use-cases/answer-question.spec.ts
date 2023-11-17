@@ -39,4 +39,26 @@ describe("Answer Question Use Case", () => {
       ],
     );
   });
+
+  it("should persist attachments when creating a new answer", async () => {
+    const response = await sut.execute({
+      instructorId: "1",
+      questionId: "1",
+      content: "New test answer",
+      attachmentsIds: ["1", "2"],
+    });
+
+    expect(response.isRight()).toBeTruthy();
+    expect(inMemoryAnswerAttachmentsRepository.items).toHaveLength(2);
+    expect(inMemoryAnswerAttachmentsRepository.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          attachmentId: new UniqueEntityID("1"),
+        }),
+        expect.objectContaining({
+          attachmentId: new UniqueEntityID("2"),
+        }),
+      ]),
+    );
+  });
 });
