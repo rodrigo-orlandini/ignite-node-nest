@@ -62,8 +62,12 @@ describe("Fetch question comments (E2E)", () => {
     expect(response.body.questionComments).toHaveLength(2);
     expect(response.body).toEqual({
       questionComments: [
-        expect.objectContaining({ content: "Comment 02" }),
-        expect.objectContaining({ content: "Comment 01" }),
+        expect.objectContaining({
+          content: "Comment 02",
+        }),
+        expect.objectContaining({
+          content: "Comment 01",
+        }),
       ],
     });
   });

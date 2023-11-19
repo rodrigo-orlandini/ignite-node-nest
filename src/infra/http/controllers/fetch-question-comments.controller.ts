@@ -11,7 +11,7 @@ import { z } from "zod";
 import { ZodValidationPipe } from "src/infra/http/pipes/zod-validation-pipe";
 
 import { FetchQuestionCommentsUseCase } from "src/domain/forum/application/use-cases/fetch-question-comments";
-import { HttpCommentPresenter } from "../presenters/http-comment-presenter";
+import { HttpCommentWithAuthorPresenter } from "../presenters/http-comment-with-author-presenter";
 
 const pageQueryParamSchema = z
   .string()
@@ -46,7 +46,9 @@ export class FetchQuestionCommentsController {
     const questionComments = response.value.questionComments;
 
     return {
-      questionComments: questionComments.map(HttpCommentPresenter.toHTTP),
+      questionComments: questionComments.map(
+        HttpCommentWithAuthorPresenter.toHTTP,
+      ),
     };
   }
 }
