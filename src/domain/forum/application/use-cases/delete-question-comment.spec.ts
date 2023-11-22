@@ -4,16 +4,21 @@ import { UniqueEntityID } from "src/core/entities/unique-entity-id";
 
 import { InMemoryQuestionCommentsRepository } from "test/repositories/in-memory-question-comments-repository";
 import { makeQuestionComment } from "test/factories/make-question-comment";
+import { InMemoryStudentsRepository } from "test/repositories/in-memory-students-repository";
 
 import { NotAllowedError } from "../../../../core/errors/not-allowed-error";
 
 let sut: DeleteQuestionCommentUseCase;
+let inMemoryStudentsRepository: InMemoryStudentsRepository;
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository;
 
 describe("Delete Question Comment Use Case", () => {
   beforeEach(() => {
-    inMemoryQuestionCommentsRepository =
-      new InMemoryQuestionCommentsRepository();
+    inMemoryStudentsRepository = new InMemoryStudentsRepository();
+
+    inMemoryQuestionCommentsRepository = new InMemoryQuestionCommentsRepository(
+      inMemoryStudentsRepository,
+    );
 
     sut = new DeleteQuestionCommentUseCase(inMemoryQuestionCommentsRepository);
   });

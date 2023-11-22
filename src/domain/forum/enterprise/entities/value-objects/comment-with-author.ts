@@ -11,7 +11,7 @@ export interface CommentWithAuthorProps {
 }
 
 export class CommentWithAuthor extends ValueObject<CommentWithAuthorProps> {
-  static create(props: CommentWithAuthorProps) {
+  public static create(props: CommentWithAuthorProps) {
     return new CommentWithAuthor(props);
   }
 

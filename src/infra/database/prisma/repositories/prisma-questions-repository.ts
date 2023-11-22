@@ -4,9 +4,11 @@ import { PaginationParams } from "src/core/repositories/pagination-params";
 import { QuestionsRepository } from "src/domain/forum/application/repositories/questions-repository";
 import { QuestionAttachmentsRepository } from "src/domain/forum/application/repositories/question-attachments-repository";
 import { Question } from "src/domain/forum/enterprise/entities/question";
+import { QuestionDetails } from "src/domain/forum/enterprise/entities/value-objects/question-details";
 
 import { PrismaService } from "../prisma.service";
 import { PrismaQuestionMapper } from "../mappers/prisma-question-mapper";
+import { PrismaQuestionDetailsMapper } from "../mappers/prisma-question-details-mapper";
 
 @Injectable()
 export class PrismaQuestionsRepository implements QuestionsRepository {
@@ -80,5 +82,21 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     });
 
     return questions.map(PrismaQuestionMapper.toDomain);
+  }
+
+  async findDetailsBySlug(slug: string): Promise<QuestionDetails | null> {
+    const question = await this.prisma.question.findUnique({
+      where: { slug },
+      include: {
+        author: true,
+        attachments: true,
+      },
+    });
+
+    if (!question) {
+      return null;
+    }
+
+    return PrismaQuestionDetailsMapper.toDomain(question);
   }
 }
