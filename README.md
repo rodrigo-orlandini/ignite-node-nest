@@ -11,3 +11,4 @@ It was basically created with **NodeJS** and **NestJS**.
 [![NestJS](.markdown/nest.png "NestJS")](https://docs.nestjs.com/)
 [![Typescript](.markdown/typescript.png "Typescript")](https://www.typescriptlang.org/)
 [![NodeJS](.markdown/node.png "NodeJS")](https://nodejs.org/docs/latest/api/)
+[![Docker](.markdown/docker.png "Docker")](https://docs.docker.com/)
